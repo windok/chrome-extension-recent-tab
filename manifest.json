@@ -1,11 +1,13 @@
 {
   "manifest_version": 2,
-  "name": "CLUT: Cycle Last Used Tabs",
+  "name": "windok CLUT: Cycle Last Used Tabs",
   "description": "Cycle through last used Chrome tabs using keyboard shortcut.",
   "version": "1.7",
-  "short_name": "CLUT",
+  "short_name": "windok CLUT",
   "permissions": [
-    "tabs"
+    "tabs",
+    "activeTab",
+    "<all_urls>"
   ],
   //  "content_security_policy" : "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   "icons": {
@@ -16,36 +18,29 @@
     "background":{
       "scripts" : ["background.js"]
     },
-//  "content_scripts": [
-//    {
-//      "matches": [
-//        "https://*/*"
-//      ],
-//      "run_at": "document_end",
-//      "js": [
-//        "background.js"
-//      ]
-//    }
-//  ],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"]
+  }],
   "commands": {
     "alt_switch_fast": {
       "suggested_key": {
-        "default": "Ctrl+E",
-        "mac": "Command+E"
+        "default": "Alt+W",
+        "mac": "Alt+W"
       },
       "description": "Quick switch - Use to switch quickly among last 2 to 4 tabs. (Suggested: Alt+W)"
     },
     "alt_switch_slow_backward": {
       "suggested_key": {
         "default": "Alt+S",
-        "mac": "Alt+S"
+        "mac": "Command+E"
       },
       "description": "Normal switch backward (Suggested: Alt+S) "
     },
     "alt_switch_slow_forward": {
       "suggested_key": {
         "default": "Alt+Shift+S",
-        "mac": "Alt+Shift+S"
+        "mac": "Command+Shift+E"
       },
       "description": "Normal switch forward (Suggested: Alt+Shift+S)"
     }

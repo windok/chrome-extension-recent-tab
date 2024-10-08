@@ -71,13 +71,38 @@ var processCommand = function(command) {
 			clearTimeout(timer);
 		}
 	}
+
+	drawOverlay();
+
 	if(fastswitch) {
 		timer = setTimeout(function() {endSwitch()},fasttimerValue);
 	} else {
 		timer = setTimeout(function() {endSwitch()},slowtimerValue);
 	}
-
 };
+
+async function drawOverlay() {
+	const tabs = await getTabs();
+	// When the browser-action button is clicked...
+	chrome.tabs.getSelected(null,function(tab) { // null defaults to current window
+		chrome.tabs.sendMessage(tab.id, {text: 'windok_clut_show_overlay', tabs: tabs.map(t => ({
+				id: t.id,
+				title: t.title,
+				url: t.url,
+				icon: t.favIconUrl,
+		})) });
+	});
+
+
+}
+
+async function removeOverlay() {
+	chrome.tabs.query({}, function(tabs) {
+		for (const tab of tabs) {
+			chrome.tabs.sendMessage(tab.id, { text: 'windok_clut_remove_overlay' })
+		}
+	});
+}
 
 chrome.commands.onCommand.addListener(processCommand);
 
@@ -139,6 +164,7 @@ var doIntSwitch = function() {
 
 var endSwitch = function() {
 	CLUTlog("CLUT::END_SWITCH");
+	removeOverlay();
 	slowSwitchOngoing = false;
 	fastSwitchOngoing = false;
 	var tabId = mru[lastIntSwitchIndex];
@@ -242,6 +268,7 @@ var initialize = function() {
 
 var printMRUSimple = async function() {
 	const tabs = await getTabs();
+	// console.log(`--------------> `, tabs);
 	CLUTlog(tabs.map(t => `${t.index} - ${t.title}`));
 }
 
